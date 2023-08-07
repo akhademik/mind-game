@@ -1,0 +1,12 @@
+@import 'variables';
+
+body {
+  font-family: $font-normal;
+}
+
+.app {
+  width: clamp(600px, 80%, 1024px);
+  margin: 0 auto;
+  margin-top: 3rem;
+  color: red;
+}

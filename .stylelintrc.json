@@ -1,0 +1,6 @@
+{
+  "extends": ["stylelint-config-standard-scss", "stylelint-config-idiomatic-order"],
+  "rules": {
+    "declaration-empty-line-before": "never"
+  }
+}

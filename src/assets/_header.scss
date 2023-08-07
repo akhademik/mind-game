@@ -1,0 +1,32 @@
+@import 'variables';
+
+.header {
+  @include flex-row;
+  justify-content: space-between;
+
+  h1 {
+    font-family: $font-title;
+    font-size: 48px;
+    font-weight: $fw-dark;
+  }
+
+  &-board {
+    @include flex-row;
+  }
+}
+
+.board {
+  @include board-default;
+
+  &-match {
+    color: red;
+  }
+
+  &-move {
+    color: red;
+  }
+
+  &-timer {
+    color: red;
+  }
+}
