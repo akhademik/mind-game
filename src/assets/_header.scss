@@ -2,7 +2,10 @@
 
 .header {
   @include flex-row;
+
+  // @include test;
   justify-content: space-between;
+  margin-bottom: 1rem;
 
   h1 {
     font-family: $font-title;

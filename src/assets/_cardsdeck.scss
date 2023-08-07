@@ -1,0 +1,37 @@
+@import 'variables';
+
+.cards-deck {
+  @include flex-row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.deck {
+  // @include test;
+
+  @include flex-row;
+
+  // overflow: hidden;
+  position: relative;
+  width: 123px;
+  height: 200px;
+  justify-content: center;
+  border: 1px dashed rgb(17 160 41);
+  border-radius: $border-normal;
+  cursor: pointer;
+
+  img {
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+  }
+
+  &:hover {
+    border: 1px solid rgb(17 160 41);
+    transform: scale(1.2, 1.1);
+    transition: {
+      duration: 0.1s;
+      ease: ease-in-out;
+    }
+  }
+}
