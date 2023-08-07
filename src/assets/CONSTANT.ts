@@ -1,11 +1,11 @@
+import { v4 as uuid } from 'uuid'
+
 interface IFullDeck extends Array<TDeck> {}
 type TDeck = {
-  id: number
+  id: string
   url: string
-}
-
-const shuffleDeck = (deck: string[]) => {
-  return deck.sort(() => Math.random() - 0.5)
+  isOpen: boolean
+  isMatch: boolean
 }
 
 const DECKNAMES = [
@@ -18,11 +18,17 @@ const DECKNAMES = [
   'tractor'
 ]
 
+const shuffleDeck = (deck: string[]) => {
+  return deck.sort(() => Math.random() - 0.5)
+}
+
 const generateDecks = (): IFullDeck => {
   const newDeck = shuffleDeck(shuffleDeck(shuffleDeck(DECKNAMES)))
-  return newDeck.map((name: string) => ({
-    id: newDeck.indexOf(name),
-    url: name
+  return newDeck.map((name) => ({
+    id: uuid(),
+    url: name,
+    isOpen: false,
+    isMatch: false
   }))
 }
 
