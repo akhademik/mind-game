@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid'
 import type { IFullDeck, TDeck } from './types'
 
 export const getURL = (url: string) => {
-  const path = new URL('@/assets/img/', import.meta.url)
+  const path = new URL('../assets/img/', import.meta.url)
   return `${path}/${url}.png`
 }
 
