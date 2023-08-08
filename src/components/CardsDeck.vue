@@ -67,9 +67,7 @@ const checkChosenCards = () => {
       @click="!deck.isMatch && handleCardClick(deck)"
     >
       <img :src="deck.isOpen || deck.isMatch ? getURL(deck.url) : getURL('covered')" />
-      <!-- <img :src="`../assets/img/${deck.url}.png`" /> -->
     </div>
-    <!-- <h1>{{ waitTime }}</h1> -->
     <div v-show="congras">
       <h1>Congratulation</h1>
     </div>
