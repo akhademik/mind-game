@@ -35,3 +35,19 @@
     }
   }
 }
+
+.disable {
+  @include flex-row;
+  position: relative;
+  width: 123px;
+  height: 200px;
+  justify-content: center;
+  border: 1px dashed rgb(17 160 41);
+  border-radius: $border-normal;
+
+  img {
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+  }
+}
