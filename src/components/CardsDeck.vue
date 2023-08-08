@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DECKNAMES } from '@/utils/CONSTANT'
+import { DECKNAMES, WAITIME } from '@/utils/CONSTANT'
 import { getURL, generateDecks } from '@/utils/helperfunctions'
 import type { TDeck, IFullDeck } from '@/utils/types'
 import { ref, computed, type Ref } from 'vue'
@@ -28,7 +28,7 @@ const matchedCard = (chosenCards: Ref<IFullDeck>) => {
 const flipBack = () => {
   setTimeout(() => {
     FULLDECK.value.forEach((deck) => (deck.isOpen = false))
-  }, 700)
+  }, WAITIME)
 }
 
 const handleCardClick = (card: TDeck) => {
