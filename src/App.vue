@@ -1,73 +1,98 @@
 <script setup lang="ts">
 import TheHeader from './components/TheHeader.vue'
 import CardsDeck from './components/CardsDeck.vue'
+import { DECKNAMES, WAITIME } from './utils/CONSTANT'
+import { generateDecks } from './utils/helperfunctions'
+
+import type { IFullDeck, TDeck } from './utils/types'
+import type { Ref } from 'vue'
 import { computed, ref } from 'vue'
-import { IFullDeck } from './utils/types'
 
-// NOTE: All variables for the timer
+const FULLDECK = ref([...generateDecks(DECKNAMES)])
 const timer = ref<number>(0)
+const playerClick = ref(0)
+const playerMoves = computed(() => Math.floor(playerClick.value / 2))
 
-const secondsTimer = computed(() => {
+let timerIntervalID: number | undefined = undefined
+
+// NOTE: LOGIC FOR PLAYER STATS
+const secondsPlayed = computed(() => {
   const seconds = timer.value % 60
   return seconds < 10 ? `0${seconds}` : seconds
 })
 
-const minutesTimer = computed(() => {
+const minutesPlayed = computed(() => {
   const mins = Math.floor(timer.value / 60)
   return mins < 10 ? `0${mins}` : mins
 })
 
-let intervalID: number | undefined = undefined
-
-// Start the timer/counter when hit the first card
-const runTimer = () => {
-  intervalID = setInterval(() => {
-    if (timer.value >= 0) {
-      timer.value += 1
-    } else {
-      clearInterval(intervalID)
-    }
+// FIXME: fixe the interval to stop the counter when all pairs are matched
+const startTheTimer = () => {
+  timerIntervalID = setInterval(() => {
+    timer.value >= 0
+      ? (timer.value += 1)
+      : matched.value == FULLDECK.value.length / 2 && clearInterval(timerIntervalID)
   }, 1000)
 }
 
-// NOTE: Stats for user
-const playerClick = ref(0)
-
-const playerMoves = computed(() => {
-  return Math.floor(playerClick.value / 2)
-})
-
-let count: number = 0
-const fullDecks = ref<IFullDeck>([])
 const matched = computed(() => {
-  let newCount = count
-  fullDecks.value.forEach((deck) => {
-    deck.isMatch && (count = count + 1)
-  })
-  return count === 0 ? count / 2 : (count - newCount) / 2
+  // NOTE: Run through elements, if element isMatch true then +1 to acc, if false add 0
+  // Array.reduce((acc,element) => acc + element, initAcc)
+  // Last one, if count is 0 then print 0, if more than 0 then / 2
+  const count = FULLDECK.value.reduce((acc, deck) => acc + (deck.isMatch ? 1 : 0), 0)
+  return count === 0 ? 0 : count / 2
 })
 
-const getUpdate = (newArr: []) => {
-  fullDecks.value = newArr
+// CARD LOGIC
+const checkMatched = ref<IFullDeck>([])
+
+const handleCardClick = (card: TDeck) => {
+  !timerIntervalID && startTheTimer()
+  card.isOpen = true
+  checkMatched.value.push(card)
+  checkChosenCards()
+}
+const matchedCard = (chosenCards: Ref<IFullDeck>) => {
+  FULLDECK.value.forEach((card) => {
+    if (chosenCards.value.some((cCard) => cCard.id == card.id)) {
+      card.isMatch = true
+    }
+  })
+}
+const resetPick = (pick: Ref<IFullDeck>) => {
+  pick.value = []
+  flipBack()
+}
+
+const flipBack = () => {
+  setTimeout(() => FULLDECK.value.forEach((deck) => (deck.isOpen = false)), WAITIME)
+}
+
+const checkChosenCards = () => {
+  const [card1, card2] = checkMatched.value
+
+  if (card1?.id !== card2?.id && checkMatched.value.length === 2) {
+    if (card1?.url === card2?.url) {
+      matchedCard(checkMatched)
+    }
+    resetPick(checkMatched)
+  }
 }
 </script>
 
 <template>
   <main class="app">
     <TheHeader
-      :seconds-timer="secondsTimer"
-      :minutes-timer="minutesTimer"
+      :seconds-played="secondsPlayed"
+      :minutes-played="minutesPlayed"
       :player-moves="playerMoves"
       :matched-pair="matched"
-      :full-decks="fullDecks"
+      :full-decks="FULLDECK"
     />
     <CardsDeck
-      :run-timer="runTimer"
-      :interval-ID="intervalID"
       :player-click="playerClick"
-      @update-full="getUpdate"
-      @card-click="() => (playerClick += 1)"
+      :full-decks="FULLDECK"
+      @card-click="(card) => handleCardClick(card)"
     />
-    <h1>{{ matched }}</h1>
   </main>
 </template>

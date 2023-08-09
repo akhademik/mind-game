@@ -1,79 +1,26 @@
 <script setup lang="ts">
-import { DECKNAMES, WAITIME } from '@/utils/CONSTANT'
-import { getURL, generateDecks } from '@/utils/helperfunctions'
-import type { TDeck, IFullDeck } from '@/utils/types'
-import { ref, computed, type Ref, watch } from 'vue'
+import { getURL } from '@/utils/helperfunctions'
+import type { IFullDeck, TDeck } from '@/utils/types'
 
-const props = defineProps(['intervalID', 'runTimer'])
-const emit = defineEmits(['cardClick', 'updateFull'])
-const FULLDECK = ref([...generateDecks(DECKNAMES)])
-
-const congras = computed(() => {
-  return FULLDECK.value.every((card) => card.isMatch)
-})
-
-const checkMatched = ref<IFullDeck>([])
-
-const resetPick = (pick: Ref<IFullDeck>) => {
-  pick.value = []
-  flipBack()
-}
-const matchedCard = (chosenCards: Ref<IFullDeck>) => {
-  FULLDECK.value.forEach((card) => {
-    if (chosenCards.value.some((cCard) => cCard.id == card.id)) {
-      card.isMatch = true
-    }
-  })
-}
-
-const flipBack = () => {
-  setTimeout(() => FULLDECK.value.forEach((deck) => (deck.isOpen = false)), WAITIME)
-}
+defineProps<{
+  fullDecks: IFullDeck
+}>()
+const emit = defineEmits(['cardClick'])
 
 const handleCardClick = (card: TDeck) => {
-  !props.intervalID && props.runTimer()
-  card.isOpen = true
-  checkMatched.value.push(card)
-  checkChosenCards()
-  emit('cardClick')
+  emit('cardClick', card)
 }
-
-const checkChosenCards = () => {
-  const cardLength = checkMatched.value.length
-  const card1 = checkMatched.value[0]
-  const card2 = checkMatched.value[1]
-
-  if (!cardLength) return
-  if (cardLength == 2) {
-    if (card1.id == card2.id) {
-      return
-    } else if (card1.id != card2.id && card1.url == card2.url) {
-      matchedCard(checkMatched)
-      resetPick(checkMatched)
-      return
-    } else {
-      resetPick(checkMatched)
-    }
-  }
-}
-
-watch(FULLDECK.value, (newFullDeck) => {
-  emit('updateFull', newFullDeck)
-})
 </script>
 
 <template>
   <div class="cards-deck">
     <div
-      v-for="deck in FULLDECK"
+      v-for="deck in fullDecks"
       :key="deck.id"
       :class="` ${deck.isMatch ? 'disable' : 'deck'}`"
-      @click="!deck.isMatch && handleCardClick(deck)"
+      @click="handleCardClick(deck)"
     >
       <img :src="deck.isOpen || deck.isMatch ? getURL(deck.url) : getURL('covered')" />
-    </div>
-    <div v-show="congras">
-      <h1>Congratulation</h1>
     </div>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps(['secondsTimer', 'minutesTimer', 'playerMoves', 'matchedPair', 'fullDecks'])
+defineProps(['secondsPlayed', 'minutesPlayed', 'playerMoves', 'matchedPair', 'fullDecks'])
 </script>
 
 <template>
@@ -15,7 +15,7 @@ defineProps(['secondsTimer', 'minutesTimer', 'playerMoves', 'matchedPair', 'full
         <p>Move</p>
       </div>
       <div class="board board-timer">
-        <p>{{ minutesTimer }} : {{ secondsTimer }}</p>
+        <p>{{ minutesPlayed }} : {{ secondsPlayed }}</p>
         <p>Timer</p>
       </div>
     </div>
