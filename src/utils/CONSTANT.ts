@@ -1,4 +1,4 @@
-// name of cards same and name of picture files
+// NOTE: Name of cards same as name of picture files
 export const DECKNAMES: string[] = [
   'bulldozer',
   'excavator',
@@ -8,5 +8,4 @@ export const DECKNAMES: string[] = [
   'skid_loader',
   'tractor'
 ]
-
 export const WAITIME = 900

@@ -2,8 +2,10 @@
 import { DECKNAMES, WAITIME } from '@/utils/CONSTANT'
 import { getURL, generateDecks } from '@/utils/helperfunctions'
 import type { TDeck, IFullDeck } from '@/utils/types'
-import { ref, computed, type Ref } from 'vue'
+import { ref, computed, type Ref, watch } from 'vue'
 
+const props = defineProps(['intervalID', 'runTimer'])
+const emit = defineEmits(['cardClick', 'updateFull'])
 const FULLDECK = ref([...generateDecks(DECKNAMES)])
 
 const congras = computed(() => {
@@ -16,7 +18,6 @@ const resetPick = (pick: Ref<IFullDeck>) => {
   pick.value = []
   flipBack()
 }
-
 const matchedCard = (chosenCards: Ref<IFullDeck>) => {
   FULLDECK.value.forEach((card) => {
     if (chosenCards.value.some((cCard) => cCard.id == card.id)) {
@@ -26,15 +27,15 @@ const matchedCard = (chosenCards: Ref<IFullDeck>) => {
 }
 
 const flipBack = () => {
-  setTimeout(() => {
-    FULLDECK.value.forEach((deck) => (deck.isOpen = false))
-  }, WAITIME)
+  setTimeout(() => FULLDECK.value.forEach((deck) => (deck.isOpen = false)), WAITIME)
 }
 
 const handleCardClick = (card: TDeck) => {
+  !props.intervalID && props.runTimer()
   card.isOpen = true
   checkMatched.value.push(card)
   checkChosenCards()
+  emit('cardClick')
 }
 
 const checkChosenCards = () => {
@@ -49,13 +50,16 @@ const checkChosenCards = () => {
     } else if (card1.id != card2.id && card1.url == card2.url) {
       matchedCard(checkMatched)
       resetPick(checkMatched)
-
       return
     } else {
       resetPick(checkMatched)
     }
   }
 }
+
+watch(FULLDECK.value, (newFullDeck) => {
+  emit('updateFull', newFullDeck)
+})
 </script>
 
 <template>
