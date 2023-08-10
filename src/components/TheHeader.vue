@@ -6,7 +6,7 @@ const cardStyle =
 </script>
 
 <template>
-  <div class="mb-4 justify-between p-2 md:flex">
+  <div class="justify-between p-2 mb-4 md:flex">
     <h1 class="mt-auto text-center font-nice text-[3rem] text-blue-600">Mind Games</h1>
     <div class="flex items-center justify-center gap-2">
       <div :class="cardStyle">

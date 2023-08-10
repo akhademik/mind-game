@@ -26,14 +26,13 @@ const matched = computed(() => {
 let timerIntervalID: number | undefined = undefined
 
 // NOTE: LOGIC FOR PLAYER STATS
-const secondsPlayed = computed(() => {
-  const seconds = timer.value % 60
-  return seconds < 10 ? `0${seconds}` : seconds
-})
-
-const minutesPlayed = computed(() => {
-  const mins = Math.floor(timer.value / 60)
-  return mins < 10 ? `0${mins}` : mins
+const timePlayed = computed(() => {
+  let seconds = timer.value % 60
+  let minutes = Math.floor(seconds / 60)
+  return {
+    seconds: seconds < 10 ? `0${seconds}` : seconds,
+    minutes: minutes < 10 ? `0${minutes}` : minutes
+  }
 })
 
 const startTheTimer = () => {
@@ -95,8 +94,8 @@ const checkChosenCards = () => {
 <template>
   <main class="m-auto max-w-[1024px] items-center justify-center">
     <TheHeader
-      :seconds-played="secondsPlayed"
-      :minutes-played="minutesPlayed"
+      :seconds-played="timePlayed.seconds"
+      :minutes-played="timePlayed.minutes"
       :player-moves="playerMoves"
       :matched-pair="matched"
       :full-decks="FULLDECK"
