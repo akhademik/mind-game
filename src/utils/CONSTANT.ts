@@ -5,7 +5,7 @@ export const DECKNAMES: string[] = [
   'garbage_truck',
   'hoisting_crane',
   'road_roller',
-  'skid_loader',
-  'tractor'
+  'skid_loader'
+  // 'tractor',
 ]
 export const WAITIME = 1300

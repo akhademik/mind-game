@@ -93,7 +93,7 @@ const checkChosenCards = () => {
 </script>
 
 <template>
-  <main class="app">
+  <main class="m-auto max-w-[1024px] items-center justify-center">
     <TheHeader
       :seconds-played="secondsPlayed"
       :minutes-played="minutesPlayed"
