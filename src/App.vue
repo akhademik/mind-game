@@ -26,13 +26,17 @@ const minutesPlayed = computed(() => {
   return mins < 10 ? `0${mins}` : mins
 })
 
-// FIXME: fixe the interval to stop the counter when all pairs are matched
 const startTheTimer = () => {
-  timerIntervalID = setInterval(() => {
-    timer.value >= 0
-      ? (timer.value += 1)
-      : matched.value == FULLDECK.value.length / 2 && clearInterval(timerIntervalID)
-  }, 1000)
+  if (!timerIntervalID) {
+    timerIntervalID = setInterval(() => {
+      if (matched.value == FULLDECK.value.length / 2) {
+        clearInterval(timerIntervalID)
+        timerIntervalID = undefined
+      } else {
+        timer.value += 1
+      }
+    }, 1000)
+  }
 }
 
 const matched = computed(() => {
@@ -47,7 +51,7 @@ const matched = computed(() => {
 const checkMatched = ref<IFullDeck>([])
 
 const handleCardClick = (card: TDeck) => {
-  !timerIntervalID && startTheTimer()
+  startTheTimer()
   card.isOpen = true
   checkMatched.value.push(card)
   checkChosenCards()
