@@ -9,9 +9,19 @@ import type { Ref } from 'vue'
 import { computed, ref } from 'vue'
 
 const FULLDECK = ref([...generateDecks(DECKNAMES)])
+const checkMatched = ref<IFullDeck>([])
+const isShowingCards = ref(false)
 const timer = ref<number>(0)
 const playerClick = ref(0)
 const playerMoves = computed(() => Math.floor(playerClick.value / 2))
+
+const matched = computed(() => {
+  // NOTE: Run through elements, if element isMatch true then +1 to acc, if false add 0
+  // Array.reduce((acc,element) => acc + element, initAcc)
+  // Last one, if count is 0 then print 0, if more than 0 then / 2
+  const count = FULLDECK.value.reduce((acc, deck) => acc + (deck.isMatch ? 1 : 0), 0)
+  return count === 0 ? 0 : count / 2
+})
 
 let timerIntervalID: number | undefined = undefined
 
@@ -39,24 +49,17 @@ const startTheTimer = () => {
   }
 }
 
-const matched = computed(() => {
-  // NOTE: Run through elements, if element isMatch true then +1 to acc, if false add 0
-  // Array.reduce((acc,element) => acc + element, initAcc)
-  // Last one, if count is 0 then print 0, if more than 0 then / 2
-  const count = FULLDECK.value.reduce((acc, deck) => acc + (deck.isMatch ? 1 : 0), 0)
-  return count === 0 ? 0 : count / 2
-})
-
-// CARD LOGIC
-const checkMatched = ref<IFullDeck>([])
-
 const handleCardClick = (card: TDeck) => {
-  startTheTimer()
-  card.isOpen = true
-  checkMatched.value.push(card)
-  playerClick.value += 1
-  checkChosenCards()
+  if (isShowingCards.value) return
+  else {
+    startTheTimer()
+    card.isOpen = true
+    checkMatched.value.push(card)
+    playerClick.value += 1
+    checkChosenCards()
+  }
 }
+
 const matchedCard = (chosenCards: Ref<IFullDeck>) => {
   FULLDECK.value.forEach((card) => {
     if (chosenCards.value.some((cCard) => cCard.id == card.id)) {
@@ -64,13 +67,18 @@ const matchedCard = (chosenCards: Ref<IFullDeck>) => {
     }
   })
 }
+
 const resetPick = (pick: Ref<IFullDeck>) => {
   pick.value = []
   flipBack()
 }
 
 const flipBack = () => {
-  setTimeout(() => FULLDECK.value.forEach((deck) => (deck.isOpen = false)), WAITIME)
+  isShowingCards.value = true
+  setTimeout(() => {
+    FULLDECK.value.forEach((deck) => (deck.isOpen = false))
+    isShowingCards.value = false
+  }, WAITIME)
 }
 
 const checkChosenCards = () => {
@@ -95,6 +103,7 @@ const checkChosenCards = () => {
     />
     <CardsDeck
       :player-click="playerClick"
+      :is-showing-cards="isShowingCards"
       :full-decks="FULLDECK"
       @card-click="(card) => handleCardClick(card)"
     />

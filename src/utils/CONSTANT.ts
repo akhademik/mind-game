@@ -8,4 +8,4 @@ export const DECKNAMES: string[] = [
   'skid_loader',
   'tractor'
 ]
-export const WAITIME = 900
+export const WAITIME = 1300

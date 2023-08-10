@@ -2,7 +2,7 @@
 import { getURL } from '@/utils/helperfunctions'
 import type { IFullDeck } from '@/utils/types'
 
-defineProps<{ fullDecks: IFullDeck }>()
+defineProps<{ fullDecks: IFullDeck; isShowingCards: boolean }>()
 </script>
 
 <template>
@@ -10,8 +10,8 @@ defineProps<{ fullDecks: IFullDeck }>()
     <div
       v-for="deck in fullDecks"
       :key="deck.id"
-      :class="` ${deck.isMatch ? 'disable' : 'deck'}`"
-      @click="$emit('cardClick', deck)"
+      :class="` ${deck.isMatch ? 'found' : isShowingCards ? 'disable' : 'deck'}`"
+      @click="!isShowingCards && $emit('cardClick', deck)"
     >
       <img :src="deck.isOpen || deck.isMatch ? getURL(deck.url) : getURL('covered')" />
     </div>

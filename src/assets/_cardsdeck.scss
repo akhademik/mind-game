@@ -4,41 +4,42 @@ $bd-clr: rgb(17 160 41);
 
 .cards-deck {
   @include flex-row;
+
+  // display: flex;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+
+  // justify-content: space-evenly;
+
+  & > div > img {
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+  }
 }
 
-.deck {
-  // @include test;
-
+.deck,
+.disable {
+  @include transition;
   @include flex-row;
-
-  // overflow: hidden;
   position: relative;
   width: 123px;
   height: 200px;
   justify-content: center;
   border: 0.1px dashed $bd-clr;
   border-radius: $border-normal;
-  cursor: pointer;
+}
 
-  img {
-    position: absolute;
-    z-index: -1;
-    width: 90%;
-  }
+.deck {
+  cursor: pointer;
 
   &:hover {
     border: 1px solid red;
     transform: scale(1.2, 1.1);
-    transition: {
-      duration: 0.1s;
-      ease: ease-in-out;
-    }
   }
 }
 
-.disable {
+.found {
+  @include transition(0.2s);
   @include flex-row;
   position: relative;
   width: 123px;
@@ -57,11 +58,5 @@ $bd-clr: rgb(17 160 41);
     background: rgb(238 64 12);
     content: '';
     transform: rotate(39deg);
-  }
-
-  img {
-    position: absolute;
-    z-index: -1;
-    width: 100%;
   }
 }

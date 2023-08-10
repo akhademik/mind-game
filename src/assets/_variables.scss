@@ -6,8 +6,16 @@ $font-normal: 'Roboto', sans-serif;
 $fw-normal: 400;
 $fw-bold: 500;
 $fw-dark: 700;
-$flex-gap: 0.3rem;
+$flex-gap: 0.8rem;
 $border-normal: 0.5rem;
+
+@mixin transition($dur: 0.1s) {
+  transition: {
+    duration: $dur;
+    ease: ease-in-out;
+    property: all;
+  }
+}
 
 @mixin test {
   outline: 1px dashed red;
