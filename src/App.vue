@@ -54,6 +54,7 @@ const handleCardClick = (card: TDeck) => {
   startTheTimer()
   card.isOpen = true
   checkMatched.value.push(card)
+  playerClick.value += 1
   checkChosenCards()
 }
 const matchedCard = (chosenCards: Ref<IFullDeck>) => {
@@ -74,7 +75,6 @@ const flipBack = () => {
 
 const checkChosenCards = () => {
   const [card1, card2] = checkMatched.value
-
   if (card1?.id !== card2?.id && checkMatched.value.length === 2) {
     if (card1?.url === card2?.url) {
       matchedCard(checkMatched)

@@ -1,15 +1,8 @@
 <script setup lang="ts">
 import { getURL } from '@/utils/helperfunctions'
-import type { IFullDeck, TDeck } from '@/utils/types'
+import type { IFullDeck } from '@/utils/types'
 
-defineProps<{
-  fullDecks: IFullDeck
-}>()
-const emit = defineEmits(['cardClick'])
-
-const handleCardClick = (card: TDeck) => {
-  emit('cardClick', card)
-}
+defineProps<{ fullDecks: IFullDeck }>()
 </script>
 
 <template>
@@ -18,7 +11,7 @@ const handleCardClick = (card: TDeck) => {
       v-for="deck in fullDecks"
       :key="deck.id"
       :class="` ${deck.isMatch ? 'disable' : 'deck'}`"
-      @click="handleCardClick(deck)"
+      @click="$emit('cardClick', deck)"
     >
       <img :src="deck.isOpen || deck.isMatch ? getURL(deck.url) : getURL('covered')" />
     </div>
