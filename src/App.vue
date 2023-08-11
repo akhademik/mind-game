@@ -49,11 +49,12 @@ const startTheTimer = () => {
 }
 
 const handleCardClick = (card: TDeck) => {
-  if (isShowingCards.value) return
-  else {
+  if (checkMatched.value.length === 2) {
+    return
+  } else {
+    checkMatched.value.push(card)
     startTheTimer()
     card.isOpen = true
-    checkMatched.value.push(card)
     playerClick.value += 1
     checkChosenCards()
   }
@@ -68,14 +69,16 @@ const matchedCard = (chosenCards: Ref<IFullDeck>) => {
 }
 
 const resetPick = (pick: Ref<IFullDeck>) => {
-  pick.value = []
+  setTimeout(() => {
+    pick.value = []
+  }, WAITIME)
   flipBack()
 }
 
 const flipBack = () => {
   isShowingCards.value = true
   setTimeout(() => {
-    FULLDECK.value.forEach((deck) => (deck.isOpen = false))
+    FULLDECK.value.forEach((deck) => !deck.isMatch && (deck.isOpen = false))
     isShowingCards.value = false
   }, WAITIME)
 }
@@ -101,8 +104,7 @@ const checkChosenCards = () => {
       :full-decks="FULLDECK"
     />
     <CardsDeck
-      :player-click="playerClick"
-      :is-showing-cards="isShowingCards"
+      :check-matched="checkMatched"
       :full-decks="FULLDECK"
       @card-click="(card) => handleCardClick(card)"
     />
