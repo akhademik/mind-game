@@ -10,7 +10,6 @@ import { computed, ref } from 'vue'
 
 const FULLDECK = ref([...generateDecks(DECKNAMES)])
 const checkMatched = ref<IFullDeck>([])
-const isShowingCards = ref(false)
 const timer = ref<number>(0)
 const playerClick = ref(0)
 const playerMoves = computed(() => Math.floor(playerClick.value / 2))
@@ -48,10 +47,9 @@ const startTheTimer = () => {
   }
 }
 
+// FIXME: Need to guard, when user click same card twice !!
 const handleCardClick = (card: TDeck) => {
-  if (checkMatched.value.length === 2) {
-    return
-  } else {
+  if (checkMatched.value.length < 2 && !checkMatched.value.includes(card) && !card.isMatch) {
     checkMatched.value.push(card)
     startTheTimer()
     card.isOpen = true
@@ -76,10 +74,8 @@ const resetPick = (pick: Ref<IFullDeck>) => {
 }
 
 const flipBack = () => {
-  isShowingCards.value = true
   setTimeout(() => {
     FULLDECK.value.forEach((deck) => !deck.isMatch && (deck.isOpen = false))
-    isShowingCards.value = false
   }, WAITIME)
 }
 
@@ -100,8 +96,8 @@ const checkChosenCards = () => {
       :seconds-played="timePlayed.seconds"
       :minutes-played="timePlayed.minutes"
       :player-moves="playerMoves"
-      :matched-pair="matched"
-      :full-decks="FULLDECK"
+      :matched-pairs="matched"
+      :total-pairs="FULLDECK.length / 2"
     />
     <CardsDeck
       :check-matched="checkMatched"
