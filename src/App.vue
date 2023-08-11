@@ -19,12 +19,19 @@ const STATE = {
 }
 
 const COMPUTED: IComputed = {
+  // get number of matched pairs of card
   matchedPairs: computed(() => {
     const count = FULLDECK.value.reduce((acc, deck) => acc + (deck.isMatch ? 1 : 0), 0)
     return count === 0 ? 0 : count / 2
   }),
+
+  // game is finished when matched pairs equal number of decks / 2
   isGameFinished: computed(() => COMPUTED.matchedPairs.value === FULLDECK.value.length / 2),
+
+  // how many moves player made
   playerMoves: computed(() => Math.floor(STATE.playerClick.value / 2)),
+
+  // how much time minutes,seconds have passed till finished
   timePlayed: computed(() => {
     let seconds = STATE.timer.value % 60
     let minutes = Math.floor(seconds / 60)
@@ -53,7 +60,6 @@ const startTheTimer = () => {
   }
 }
 
-// FIXME: Need to guard, when user click same card twice !!
 const handleCardClick = (card: TDeck) => {
   if (checkMatched.value.length < 2 && !checkMatched.value.includes(card) && !card.isMatch) {
     checkMatched.value.push(card)
@@ -123,5 +129,11 @@ const handleReset = () => {
     />
     <TheReset @handle-reset="handleReset" />
   </main>
-  <TheModal v-else />
+  <TheModal
+    v-else
+    :player-moves="COMPUTED.playerMoves.value"
+    :seconds-played="COMPUTED.timePlayed.value.seconds"
+    :minutes-played="COMPUTED.timePlayed.value.minutes"
+    @game-restart="handleReset"
+  />
 </template>

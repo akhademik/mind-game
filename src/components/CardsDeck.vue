@@ -29,7 +29,7 @@ const chosenCSS = (deck: TDeck) =>
 </script>
 
 <template>
-  <div class="grid grid-cols-4 gap-3 m-2 sm:grid-cols-3 lg:grid-cols-6">
+  <div class="m-2 grid grid-cols-4 gap-3 sm:grid-cols-3 lg:grid-cols-6">
     <div
       v-for="deck in fullDecks"
       :key="deck.id"
