@@ -1,47 +1,53 @@
 <script setup lang="ts">
 import TheHeader from './components/TheHeader.vue'
 import CardsDeck from './components/CardsDeck.vue'
+import TheReset from './components/TheReset.vue'
+import TheModal from './components/TheModal.vue'
+
 import { DECKNAMES, WAITIME } from './utils/CONSTANT'
 import { generateDecks } from './utils/helperfunctions'
 
-import type { IFullDeck, TDeck } from './utils/types'
+import type { IComputed, IFullDeck, TDeck } from './utils/types'
 import type { Ref } from 'vue'
 import { computed, ref } from 'vue'
 
 const FULLDECK = ref([...generateDecks(DECKNAMES)])
-const checkMatched = ref<IFullDeck>([])
-const timer = ref<number>(0)
-const playerClick = ref(0)
-const playerMoves = computed(() => Math.floor(playerClick.value / 2))
 
-const matched = computed(() => {
-  // NOTE: Run through elements, if element isMatch true then +1 to acc, if false add 0
-  // Array.reduce((acc,element) => acc + element, initAcc)
-  // Last one, if count is 0 then print 0, if more than 0 then / 2
-  const count = FULLDECK.value.reduce((acc, deck) => acc + (deck.isMatch ? 1 : 0), 0)
-  return count === 0 ? 0 : count / 2
-})
+const STATE = {
+  timer: ref(0),
+  playerClick: ref(0)
+}
+
+const COMPUTED: IComputed = {
+  matchedPairs: computed(() => {
+    const count = FULLDECK.value.reduce((acc, deck) => acc + (deck.isMatch ? 1 : 0), 0)
+    return count === 0 ? 0 : count / 2
+  }),
+  isGameFinished: computed(() => COMPUTED.matchedPairs.value === FULLDECK.value.length / 2),
+  playerMoves: computed(() => Math.floor(STATE.playerClick.value / 2)),
+  timePlayed: computed(() => {
+    let seconds = STATE.timer.value % 60
+    let minutes = Math.floor(seconds / 60)
+    // NOTE: return 2 variables 'seconds' and 'minutes', access it by obj.name
+    return {
+      seconds: seconds < 10 ? `0${seconds}` : seconds,
+      minutes: minutes < 10 ? `0${minutes}` : minutes
+    }
+  })
+}
+
+const checkMatched = ref<IFullDeck>([])
 
 let timerIntervalID: number | undefined = undefined
-
-// NOTE: LOGIC FOR PLAYER STATS
-const timePlayed = computed(() => {
-  let seconds = timer.value % 60
-  let minutes = Math.floor(seconds / 60)
-  return {
-    seconds: seconds < 10 ? `0${seconds}` : seconds,
-    minutes: minutes < 10 ? `0${minutes}` : minutes
-  }
-})
 
 const startTheTimer = () => {
   if (!timerIntervalID) {
     timerIntervalID = setInterval(() => {
-      if (matched.value == FULLDECK.value.length / 2) {
+      if (COMPUTED.matchedPairs.value == FULLDECK.value.length / 2) {
         clearInterval(timerIntervalID)
         timerIntervalID = undefined
       } else {
-        timer.value += 1
+        STATE.timer.value += 1
       }
     }, 1000)
   }
@@ -53,7 +59,7 @@ const handleCardClick = (card: TDeck) => {
     checkMatched.value.push(card)
     startTheTimer()
     card.isOpen = true
-    playerClick.value += 1
+    STATE.playerClick.value += 1
     checkChosenCards()
   }
 }
@@ -88,15 +94,26 @@ const checkChosenCards = () => {
     resetPick(checkMatched)
   }
 }
+
+const handleReset = () => {
+  FULLDECK.value = generateDecks(DECKNAMES)
+  STATE.playerClick.value = 0
+  clearInterval(timerIntervalID)
+  timerIntervalID = undefined
+  STATE.timer.value = 0
+}
 </script>
 
 <template>
-  <main class="m-auto max-w-[1024px] items-center justify-center">
+  <main
+    v-if="!COMPUTED.isGameFinished.value"
+    class="m-auto max-w-[1024px]"
+  >
     <TheHeader
-      :seconds-played="timePlayed.seconds"
-      :minutes-played="timePlayed.minutes"
-      :player-moves="playerMoves"
-      :matched-pairs="matched"
+      :seconds-played="COMPUTED.timePlayed.value.seconds"
+      :minutes-played="COMPUTED.timePlayed.value.minutes"
+      :player-moves="COMPUTED.playerMoves.value"
+      :matched-pairs="COMPUTED.matchedPairs.value"
       :total-pairs="FULLDECK.length / 2"
     />
     <CardsDeck
@@ -104,5 +121,7 @@ const checkChosenCards = () => {
       :full-decks="FULLDECK"
       @card-click="(card) => handleCardClick(card)"
     />
+    <TheReset @handle-reset="handleReset" />
   </main>
+  <TheModal v-else />
 </template>
